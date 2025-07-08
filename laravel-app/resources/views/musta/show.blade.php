@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Ninja Network</title>
 </head>
 <body>
-<h1>Hier steht der Titel von Mustafa</h1>
-<p>Hier steht der Text von Mustafa</p>
-
+    <h2>Musta id - {{ $id }}</h2>
 </body>
 </html>
