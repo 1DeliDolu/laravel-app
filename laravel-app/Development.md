@@ -167,3 +167,33 @@ php artisan key:generate
 php artisan migrate
 php artisan storage:link
 composer run dev
+
+### Blade Component Örnekleri
+
+**Card Component (`resources/views/components/card.blade.php`)**
+
+```blade
+@props(['highlight' => false])
+
+<div @class(['highlight' => $highlight, 'card']) >
+  {{ $slot }}
+  <a {{ $attributes }} class="btn">View Details</a>
+</div>
+```
+
+### Açıklamalar
+
+1. **Slot Kullanımı:**
+   - `{{ $slot }}` Blade component'lerinde içerik yerleştirmek için kullanılır.
+   - Component çağrıldığında, içerik bu alana yerleştirilir.
+
+2. **Props Kullanımı:**
+   - `@props` ile component'e özel parametreler tanımlanır.
+   - Örneğin, `highlight` parametresi ile CSS sınıfları dinamik olarak eklenir.
+
+3. **Attributes Kullanımı:**
+   - `{{ $attributes }}` ile component'e eklenen HTML özellikleri aktarılır.
+   - Örneğin, `class="btn"` gibi ek özellikler dinamik olarak eklenebilir.
+
+4. **Kullanım Amacı:**
+   - Component'ler, tekrar eden HTML yapısını daha modüler ve yeniden kullanılabilir hale getirmek için kullanılır.
