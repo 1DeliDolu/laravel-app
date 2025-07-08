@@ -9,12 +9,15 @@
     <h2>Currently Available Musta</h2>
     <p>{{ $greeting }}</p>
 
+    @if($greeting == 'Hello')
+        <p>Hi from inside the if statement</p>
+    @endif
+
     <ul>
-        @foreach ($mustas as $musta)
+        @foreach($mustas as $musta)
             <li>
-                <a href="/musta/{{ $musta['id'] }}">
-                    {{ $musta['name'] }}
-                </a>
+                <p>{{ $musta['name'] }}</p>
+                <a href="/musta/{{ $musta['id'] }}">View Details</a>
             </li>
         @endforeach
     </ul>
