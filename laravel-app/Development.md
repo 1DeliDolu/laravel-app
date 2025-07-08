@@ -76,23 +76,28 @@ Route::get('/musta/{id}', function ($id) {
 ```html
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Mustafa's Page</title>
-    </head>
-    <body>
-        <h2>Currently Available Musta</h2>
-        <p>{{ $greeting }}</p>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mustafa's Page</title>
+</head>
+<body>
+    <h2>Currently Available Musta</h2>
+    <p>{{ $greeting }}</p>
 
-        <ul>
-            @foreach ($mustas as $musta)
+    @if($greeting == 'Hello')
+        <p>Hi from inside the if statement</p>
+    @endif
+
+    <ul>
+        @foreach($mustas as $musta)
             <li>
-                <a href="/musta/{{ $musta['id'] }}"> {{ $musta['name'] }} </a>
+                <p>{{ $musta['name'] }}</p>
+                <a href="/musta/{{ $musta['id'] }}">View Details</a>
             </li>
-            @endforeach
-        </ul>
-    </body>
+        @endforeach
+    </ul>
+</body>
 </html>
 ```
 
@@ -106,6 +111,13 @@ Route::get('/musta/{id}', function ($id) {
 2. **View Dosyaları:**
     - `musta.index` tüm Musta'ları listelemek için kullanılır.
     - `musta.show` belirli bir Musta'nın detaylarını göstermek için kullanılır.
+
+3. **Önemli Değişiklik:**
+   - `@if` yapısı eklendi: Greeting değişkeni "Hello" olduğunda özel bir mesaj gösteriliyor.
+   - Musta listesi düzenlendi: Her bir Musta'nın adı ve detaylarına giden bağlantı gösteriliyor.
+
+4. **Kullanım Amacı:**
+   - Kullanıcıya dinamik bir liste ve özel mesaj sunmak için kullanılır.
 
 # PHP Kurulumu
 
