@@ -7,5 +7,5 @@ Route::get('/', function () {
 });
 
 Route::get('/musta', function () {
-  return view('musta.index');
+  return view('musta.index', ["greeting" => "Hello, Musta!"]);
 });

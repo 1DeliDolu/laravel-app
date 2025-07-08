@@ -10,6 +10,7 @@
   <ul>
     <li>Mustafa here</li>
   </ul>
+    <p>{{ $greeting }}</p>
 
 </body>
 </html>
