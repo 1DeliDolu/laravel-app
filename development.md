@@ -128,6 +128,39 @@ resources/views/layouts/layout.blade.php
 
 ---
 
+## Hata ve Çözümü: Undefined variable $active
+
+Eğer aşağıdaki hata ile karşılaşırsanız:
+
+```
+Undefined variable $active
+```
+
+**Neden:**
+/blogs/{id} rotasında view'a bir dizi (tüm bloglar) gönderiliyordu, ancak blog-details.blade.php dosyası tek bir blogun verilerini ($active, $title, $description vb.) bekliyor. Bu nedenle değişkenler tanımsız kalıyordu.
+
+**Çözüm:**
+İlgili blogu $id ile bulup, sadece o blogun verilerini view'a göndermek gerekir. Kod şu şekilde olmalı:
+
+```
+Route::get('/blogs/{id}', function (int $id) {
+    $blogs = [
+        [...],
+        [...],
+        [...],
+    ];
+    $blog = collect($blogs)->firstWhere('id', $id);
+    if (!$blog) {
+        abort(404);
+    }
+    return view('blog-details', $blog);
+});
+```
+
+Bu şekilde, view dosyasında $active ve diğer değişkenler sorunsuz kullanılabilir.
+
+---
+
 ## View ve Layout Kullanımı Açıklamaları
 
 ### blog-details.blade.php
@@ -157,3 +190,87 @@ Bu dosya, blogların listelendiği ana sayfa olarak kullanılır. Yine layout.bl
 ### layout.blade.php
 
 Bu dosya, tüm sayfalarda ortak olarak kullanılan ana HTML şablonudur. Navbar, stil dosyaları ve ortak yapılar burada tanımlanır. View dosyaları, bu şablonu genişleterek sadece içerik kısmını doldurur. Böylece kod tekrarını önler ve sayfalar arası tutarlılık sağlar.
+
+---
+
+## Blade ile h1 Başlığı Ekleme (Basic)
+
+Aşağıda, Blade şablonunda bir h1 başlığının nasıl ekleneceğine dair temel bir örnek yer almaktadır:
+
+```
+@extends('layouts.layout')
+@section('content')
+    <h1>Başlık Buraya Gelecek</h1>
+@endsection
+```
+
+Bu örnekte, `@extends('layouts.layout')` ile ana şablon kullanılır ve `@section('content')` ile içerik kısmına bir h1 başlığı eklenir. Bu yapı, Laravel projelerinde sayfa başlıklarını kolayca yönetmek için kullanılır.
+
+---
+
+## Blade Basic
+
+Blade, Laravel'in kendi şablon motorudur ve dinamik olarak HTML üretmek için kullanılır. Blade ile değişkenler, kontrol yapıları ve şablon genişletme gibi işlemler kolayca yapılabilir.
+
+**Örnekler:**
+
+- Değişken Yazdırma:
+```
+{{ $isim }}
+```
+- Koşul Kullanımı:
+```
+@if($sayi > 10)
+    Büyük
+@else
+    Küçük veya eşit
+@endif
+```
+- Döngü:
+```
+@foreach($liste as $item)
+    {{ $item }}
+@endforeach
+```
+
+Blade ile kodunuzu daha okunabilir ve yönetilebilir hale getirebilirsiniz.
+
+---
+
+## Dinamik Blog Detay Sayfası (Koşullu Blade Kullanımı)
+
+Aşağıdaki kod ile, /blogs/{id} rotasında blog detayları dinamik olarak gösterilir:
+
+```
+Route::get('/blogs/{id}', function (int $id) {
+    $data = [
+        'id' => $id,
+        'title' => 'laravel dersleri',
+        'description' => 'laravel dersleri ile ilgili detaylı bilgiler',
+        "likeCount" => 100,
+        'active' => true,
+    ];
+    return view('blog-details',$data );
+});
+```
+
+`blog-details.blade.php` dosyasında ise, gönderilen veriye göre içerik koşullu olarak gösterilir:
+
+```
+@if($active)
+   <div class="card">
+    <div class="card-body">
+        <h5>{{ $title }}</h5>
+        <p>{{ $description }}</p>
+        <p>Likes: {{ $likeCount }} beğeni</p>
+        <p>Status: {{ $active ? 'Active' : 'Inactive' }}</p>
+    </div>
+   </div>
+@else
+   <div class="alert alert-warning">
+       <p>Blog post is inactive.</p>
+   </div>
+@endif
+```
+
+Bu yapı sayesinde, blog aktifse detaylar kart içinde gösterilir; değilse uyarı mesajı çıkar. Blade'in koşullu yapıları ile dinamik içerik yönetimi sağlanır.
