@@ -274,3 +274,224 @@ Route::get('/blogs/{id}', function (int $id) {
 ```
 
 Bu yapı sayesinde, blog aktifse detaylar kart içinde gösterilir; değilse uyarı mesajı çıkar. Blade'in koşullu yapıları ile dinamik içerik yönetimi sağlanır.
+
+---
+
+## Blog Listesi ve Detayları (web.php ve blogs.blade.php)
+
+### web.php
+
+```
+Route::get('/blogs', function () {
+    $data = [
+        [
+            'id' => 1,
+            'title' => 'Laravel Başlangıç',
+            'description' => 'Laravel ile projeye başlama adımları',
+            'likeCount' => 50,
+            'active' => true,
+        ],
+        [
+            'id' => 2,
+            'title' => 'Laravel Orta Seviye',
+            'description' => 'Orta seviye Laravel dersleri',
+            'likeCount' => 75,
+            'active' => false,
+        ],
+        [
+            'id' => 3,
+            'title' => 'Laravel İleri Seviye',
+            'description' => 'İleri seviye Laravel teknikleri',
+            'likeCount' => 120,
+            'active' => true,
+        ]
+    ];
+    return view('blogs', ['blogs' => $data]);
+});
+
+Route::get('/blogs/{id}', function (int $id) {
+    $blogs = [
+        [
+            'id' => 1,
+            'title' => 'Laravel Başlangıç',
+            'description' => 'Laravel ile projeye başlama adımları',
+            'likeCount' => 50,
+            'active' => true,
+        ],
+        [
+            'id' => 2,
+            'title' => 'Laravel Orta Seviye',
+            'description' => 'Orta seviye Laravel dersleri',
+            'likeCount' => 75,
+            'active' => false,
+        },
+        [
+            'id' => 3,
+            'title' => 'Laravel İleri Seviye',
+            'description' => 'İleri seviye Laravel teknikleri',
+            'likeCount' => 120,
+            'active' => true,
+        },
+    ];
+    $blog = collect($blogs)->firstWhere('id', $id);
+    if (!$blog) {
+        abort(404);
+    }
+    return view('blog-details', $blog);
+});
+```
+
+- `/blogs` rotası, tüm blogları bir dizi olarak blogs.blade.php'ye gönderir.
+- `/blogs/{id}` rotası, seçilen blogun detaylarını blog-details.blade.php'ye gönderir.
+
+### blogs.blade.php
+
+```
+@extends('layouts.layout')
+@section('content')
+<h1>Blog List</h1>
+@foreach($blogs as $blog)
+    @if($blog['active'])
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">{{ $blog['title'] }}</h5>
+                <p>{{ $blog['description'] }}</p>
+                <p>{{ $blog['likeCount'] }} likes</p>
+                <p>ID: {{ $blog['id'] }}</p>
+                <p>Active: Yes</p>
+            </div>
+        </div>
+    @endif
+@endforeach
+
+<h1>Blog List (For Loop)</h1>
+@for ($i = 0; $i < count($blogs); $i++)
+    @if($blogs[$i]['active'])
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">{{ $blogs[$i]['title'] }}</h5>
+                <p>{{ $blogs[$i]['description'] }}</p>
+                <p>{{ $blogs[$i]['likeCount'] }} likes</p>
+                <p>ID: {{ $blogs[$i]['id'] }}</p>
+                <p>Active: Yes</p>
+            </div>
+        </div>
+    @endif
+@endfor
+@endsection
+```
+
+- Bu view dosyası, kendisine gönderilen $blogs dizisindeki aktif blogları hem foreach hem de for döngüsü ile listeler.
+- Her blog kart olarak gösterilir ve sadece aktif olanlar ekrana yazdırılır.
+
+Bu yapı ile blogların listelenmesi ve detaylarının gösterilmesi kolayca yönetilir.
+
+---
+
+## HomeController ve Route Kullanımı
+
+### HomeController.php
+
+```
+public function index()
+{
+    return view('index');
+}
+```
+
+Bu fonksiyon, ana sayfa isteği geldiğinde index.blade.php view dosyasını döndürür.
+
+### web.php
+
+```
+Route::get('/', [HomeController::class, 'index']);
+```
+
+Bu satır, ana sayfa isteğini HomeController içindeki index fonksiyonuna yönlendirir.
+
+---
+
+## Resource Controller Oluşturma
+
+Aşağıdaki komut ile tüm CRUD işlemlerini içeren bir resource controller oluşturabilirsiniz:
+
+```
+php artisan make:controller BlogsController --resource
+```
+
+Bu komut, `app/Http/Controllers` klasöründe BlogsController adında bir dosya oluşturur ve içinde index, create, store, show, edit, update, destroy gibi hazır metotlar bulunur. Bu metotlar, bloglar için CRUD işlemlerini kolayca yönetmenizi sağlar.
+
+---
+
+## Resource Controller Kullanımı: BlogsController
+
+Aşağıdaki komut ile resource controller oluşturulur:
+
+```
+php artisan make:controller BlogsController --resource
+```
+
+Bu komut, `app/Http/Controllers/BlogsController.php` dosyasını oluşturur ve içinde aşağıdaki gibi CRUD işlemlerine uygun hazır metotlar bulunur:
+
+```
+public function index() { /* Blog listesi */ }
+public function create() { /* Yeni blog formu */ }
+public function store(Request $request) { /* Blog kaydet */ }
+public function show(int $id) { /* Blog detay */ }
+public function edit(int $id) { /* Blog düzenle formu */ }
+public function update(Request $request, int $id) { /* Blog güncelle */ }
+public function destroy(int $id) { /* Blog sil */ }
+```
+
+### web.php'de Kullanımı
+
+```
+use App\Http\Controllers\BlogsController;
+
+Route::get('/blogs', [BlogsController::class, 'index']);
+Route::get('/blogs/{id}', [BlogsController::class, 'show']);
+```
+
+- `/blogs` rotası BlogsController içindeki index fonksiyonunu çalıştırır ve blog listesini gösterir.
+- `/blogs/{id}` rotası show fonksiyonunu çalıştırır ve ilgili blogun detayını gösterir.
+
+### BlogsController.php Örneği
+
+```
+public function index()
+{
+    $data = [
+        [ 'id' => 1, 'title' => 'Laravel Başlangıç', ... ],
+        [ 'id' => 2, 'title' => 'Laravel Orta Seviye', ... ],
+        [ 'id' => 3, 'title' => 'Laravel İleri Seviye', ... ]
+    ];
+    return view('blogs.index', ['blogs' => $data]);
+}
+
+public function show(int $id)
+{
+    $data = [
+        [ 'id' => 1, 'title' => 'Laravel Başlangıç', ... ]
+    ];
+    return view('blogs.show', ['blogs' => $data]);
+}
+```
+
+- index(): Blog listesini döndürür.
+- show($id): İlgili blogun detayını döndürür.
+
+Bu yapı ile bloglar için CRUD işlemlerini controller üzerinden yönetebilirsiniz.
+
+---
+
+## Controller Oluşturma
+
+Aşağıdaki komut ile yeni bir controller oluşturabilirsiniz:
+
+```
+php artisan make:controller HomeController
+```
+
+Bu komut, `app/Http/Controllers` klasörü altında `HomeController.php` adında bir dosya oluşturur. Controller'lar, gelen istekleri karşılamak ve uygun response döndürmek için kullanılır. Projenizde iş mantığını ve yönlendirmeleri bu dosyada tanımlayabilirsiniz.
+
+---
