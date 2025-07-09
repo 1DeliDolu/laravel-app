@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Blogs;
 use Illuminate\Http\Request;
 
 class BlogsController extends Controller
@@ -11,30 +12,8 @@ class BlogsController extends Controller
      */
     public function index()
     {
-            $data = [
-                [
-                    'id' => 1,
-                    'title' => 'Laravel Başlangıç',
-                    'description' => 'Laravel ile projeye başlama adımları',
-                    'likeCount' => 50,
-                    'active' => true,
-                ],
-                [
-                    'id' => 2,
-                    'title' => 'Laravel Orta Seviye',
-                    'description' => 'Orta seviye Laravel dersleri',
-                    'likeCount' => 75,
-                    'active' => false,
-                ],
-                [
-                    'id' => 3,
-                    'title' => 'Laravel İleri Seviye',
-                    'description' => 'İleri seviye Laravel teknikleri',
-                    'likeCount' => 120,
-                    'active' => true,
-                ]
-            ];
-            return view('blogs.index', ['blogs' => $data]);
+           $blogs = Blogs::all();
+            return view('blogs.index', ['blogs' => $blogs]);
     }
 
     /**
@@ -57,19 +36,11 @@ class BlogsController extends Controller
      * Display the specified resource.
      */
     public function show(int $id)
-    {
+{
+    $blog = Blogs::find($id);
+    return view('blogs.show', ['blog' => $blog]);
+}
 
-    $data = [
-        [
-            'id' => 1,
-            'title' => 'Laravel Başlangıç',
-            'description' => 'Laravel ile projeye başlama adımları',
-            'likeCount' => 50,
-            'active' => true,
-        ]
-    ];
-    return view('blogs.show', ['blogs' => $data]);
-    }
 
     /**
      * Show the form for editing the specified resource.

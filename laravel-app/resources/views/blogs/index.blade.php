@@ -2,20 +2,21 @@
 @section('content')
 <h1>Blog List</h1>
 @foreach($blogs as $blog)
-    @if($blog['active'])
-        <div class="card mb-3">
-            <div class="card-body">
-                <h5 class="card-title">{{ $blog['title'] }}</h5>
-                <p>{{ $blog['description'] }}</p>
-                <p>{{ $blog['likeCount'] }} likes</p>
-                <p>ID: {{ $blog['id'] }}</p>
-                <p>Active: Yes</p>
+        @if($blog['active'])
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ $blog['title'] }}</h5>
+                    <p>{{ $blog['description'] }}</p>
+                    <p>{{ $blog['likeCount'] }} likes</p>
+                    <p>
+                        <a href="{{ url('/blogs/' . $blog['id']) }}">Detay</a>
+                    </p>
+                </div>
             </div>
-        </div>
-    @endif
-@endforeach
+        @endif
+    @endforeach
 
-<h1>Blog List (For Loop)</h1>
+{{-- <h1>Blog List (For Loop)</h1>
 @for ($i = 0; $i < count($blogs); $i++)
     @if($blogs[$i]['active'])
         <div class="card mb-3">
@@ -28,6 +29,6 @@
             </div>
         </div>
     @endif
-@endfor
+@endfor --}}
 @endsection
 
